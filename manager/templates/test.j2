@@ -1,0 +1,37 @@
+<html>
+<head>
+<title>Test page</title>
+<link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+<link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
+<link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
+</head>
+<body>
+<div class="container">
+    <div class="columns">
+        <div class="column col-12">
+            <table class="table">
+                  <thead>
+                  <tr>
+                      <th>Name</th>
+                      <th>Mustbe</th>
+                      <th>Count</th>
+                      <th>Arrive</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in parts %}
+                  <tr>
+                      <td> {{ item }}</td>
+                      <td>{{ parts[item]['mustbe'] }}</td>
+                      <td>{{ parts[item]['count'] }}</td>
+                      <td>{{ parts[item]['arrive'] }}</td>
+                  </tr>
+                    {% endfor %}
+                  </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
