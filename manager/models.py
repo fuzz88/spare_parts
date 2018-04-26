@@ -15,8 +15,8 @@ class SparePartsManager(object):
             self._alternatives = requests.get(self._ALTERNATIVES_URL).json()
         except RuntimeError:
             print('BAD NEWS')
-            self._parts = {}
-            self._alternatives = {}
+            self._parts = None
+            self._alternatives = None
 
     def all_parts(self):
         pass
