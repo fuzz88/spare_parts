@@ -10,8 +10,8 @@ class SparePartsManagerTestCase(unittest.TestCase):
     """ Sample test case
     """
 
-    def urls(url):
-        """ Patch's side_effect that pretends to be requests.get
+    def _urls(url):
+        """ side_effect function that pretends to be requests.get
         """
         _SPARE_PARTS_URL = 'https://job.firstvds.ru/spares.json'
         _ALTERNATIVES_URL = 'https://job.firstvds.ru/alternatives.json'
@@ -33,7 +33,7 @@ class SparePartsManagerTestCase(unittest.TestCase):
             return SimpleNamespace(**{'json': alternatives})
         raise NotImplementedError
 
-    @patch('requests.get', side_effect=urls)
+    @patch('requests.get', side_effect=_urls)
     def setUp(self, requests_get_patched):
         self.manager = SparePartsManager()
 
