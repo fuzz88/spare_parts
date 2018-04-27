@@ -26,21 +26,22 @@ class SparePartsManager(object):
 
         parts_grouped = {}
 
-        for part in self._parts:
+        for part, values in self._parts.items():
             # Iterate through the all parts
             group_name = self.get_alternative_group(part)
             # Does the part have an alternatives group?
             if group_name is None:
-                parts_grouped[part] = self._parts[part]  # No: keep data unchanged
+                parts_grouped[part] = values  # No: keep data unchanged
             else:
                 if group_name not in parts_grouped:
                     # Yes: in that case we should make a group, if it's not already exists,
-                    parts_grouped[group_name] = {'count': 0, 'arrive': 0, 'mustbe': []}
+                    values_mockup = {'count': 0, 'arrive': 0, 'mustbe': []}
+                    parts_grouped[group_name] = values_mockup
                 #  and sum up values
-                parts_grouped[group_name]['count'] += self._parts[part]['count']
-                parts_grouped[group_name]['arrive'] += self._parts[part]['arrive']
+                parts_grouped[group_name]['count'] += values['count']
+                parts_grouped[group_name]['arrive'] += values['arrive']
                 # There will be list for 'mustbe' values, at first
-                parts_grouped[group_name]['mustbe'].append(self._parts[part]['mustbe'])
+                parts_grouped[group_name]['mustbe'].append(values['mustbe'])
 
                 # TODO: maybe we would like to save the alternatives for the future, like
                 # parts_grouped[group_name]['alt_list'].append(self._parts[part])
@@ -63,15 +64,15 @@ class SparePartsManager(object):
 
         parts = self.parts_grouped
 
-        for part in parts:
-            avail_and_awaiting = parts[part]['count'] + parts[part]['arrive']
-            if parts[part]['mustbe'] > avail_and_awaiting:
-                order[part] = {'quantity': parts[part]['mustbe'] - avail_and_awaiting}
+        for part, values in parts.items():
+            parts_quantity = values['count'] + values['arrive']
+            if values['mustbe'] > parts_quantity:
+                order[part] = {'quantity': values['mustbe'] - parts_quantity}
 
         return order
 
     def get_alternative_group(self, part_name):
-        for group_name in self._alternatives['alternatives']:
-            if part_name in self._alternatives['alternatives'][group_name]:
+        for group_name, group in self._alternatives['alternatives'].items():
+            if part_name in group:
                 return group_name
         return None
