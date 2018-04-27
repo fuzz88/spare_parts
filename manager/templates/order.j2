@@ -1,0 +1,33 @@
+<html>
+<head>
+<title>Order</title>
+<link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+<link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
+<link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
+</head>
+<body>
+<div class="container">
+    <div class="columns">
+        <div class="column col-12">
+            <table class="table">
+                  <thead>
+                  <tr>
+                      <th>Name</th>
+                      <th>Quantity</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in parts %}
+                  <tr>
+                      <td> {{ item }}</td>
+                      <td>{{ parts[item]['quantity'] }}</td>
+                  </tr>
+                    {% endfor %}
+                  </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
