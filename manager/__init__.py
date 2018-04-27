@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify, request
 from manager.models import SparePartsManager
 
 app = Flask(__name__)
@@ -15,4 +15,6 @@ def index():
 
 @app.route('/order')
 def order():
+    if 'json' in request.args:
+        return jsonify(manager.parts_for_order)
     return render_template('order.j2', parts=manager.parts_for_order)
