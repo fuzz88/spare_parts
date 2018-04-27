@@ -11,7 +11,7 @@ class SparePartsManagerTestCase(unittest.TestCase):
     """
 
     def urls(url):
-        """ Patch side_effect, that pretends to be requests.get
+        """ Patch's side_effect that pretends to be requests.get
         """
         _SPARE_PARTS_URL = 'https://job.firstvds.ru/spares.json'
         _ALTERNATIVES_URL = 'https://job.firstvds.ru/alternatives.json'
