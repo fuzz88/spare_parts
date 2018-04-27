@@ -6,6 +6,11 @@
 <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
 </head>
 <body>
+<style>
+.marked {
+    background: #FF8888;
+}
+</style>
 <div class="container">
     <div class="columns">
         <div class="column col-12">
@@ -20,7 +25,7 @@
                   </thead>
                   <tbody>
                     {% for item in parts %}
-                  <tr>
+                  <tr {% if parts[item]['mustbe'] > parts[item]['count'] + parts[item]['arrive'] %} class="marked"{% endif%}>
                       <td> {{ item }}</td>
                       <td>{{ parts[item]['mustbe'] }}</td>
                       <td>{{ parts[item]['count'] }}</td>

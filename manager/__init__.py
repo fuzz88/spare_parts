@@ -9,4 +9,4 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     manager = SparePartsManager()
-    return render_template('test.j2', parts=manager._parts)
+    return render_template('test.j2', parts=manager.parts_grouped)
