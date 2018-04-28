@@ -28,13 +28,13 @@ class SparePartsManager(object):
 
         for part, values in self._parts.items():
             # Iterate through the all parts
-            group_name = self.get_alternative_group(part)
+            group_name = self._get_alternative_group(part)
             # Does the part have an alternatives group?
             if group_name is None:
                 parts_grouped[part] = values  # No: keep data unchanged
             else:
                 if group_name not in parts_grouped:
-                    # Yes: in that case we should make a group, if it's not already exists,
+                    # Yes: in that case we should make a group, if it hasn't already exists,
                     values_mockup = {'count': 0, 'arrive': 0, 'mustbe': []}
                     parts_grouped[group_name] = values_mockup
                 #  and sum up values
@@ -71,7 +71,7 @@ class SparePartsManager(object):
 
         return order
 
-    def get_alternative_group(self, part_name):
+    def _get_alternative_group(self, part_name):
         for group_name, group in self._alternatives['alternatives'].items():
             if part_name in group:
                 return group_name
