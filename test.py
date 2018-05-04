@@ -7,12 +7,11 @@ from types import SimpleNamespace
 
 
 class SparePartsManagerTestCase(unittest.TestCase):
-    """ Sample test case
-    """
+    """ Sample test case """
 
     def _urls(url):
-        """ side_effect function that pretends to be requests.get
-        """
+        """ side_effect function that pretends to be requests.get """
+
         _SPARE_PARTS_URL = 'https://job.firstvds.ru/spares.json'
         _ALTERNATIVES_URL = 'https://job.firstvds.ru/alternatives.json'
 
@@ -37,8 +36,8 @@ class SparePartsManagerTestCase(unittest.TestCase):
     def setUp(self, requests_get_patched):
         self.manager = SparePartsManager()
 
-    """ TESTS
-    """
+    """ TESTS """
+
     def test_parts_grouped(self):
         self.assertDictEqual(self.manager.parts_grouped,
                              {'part1xx': {'count': 3, 'mustbe': 3, 'arrive': 0},
