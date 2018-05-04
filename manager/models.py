@@ -13,7 +13,7 @@ class SparePartsManager(object):
         try:
             self._parts = requests.get(self._SPARE_PARTS_URL).json()
             self._alternatives = requests.get(self._ALTERNATIVES_URL).json()
-        except RuntimeError:
+        except requests.exceptions.ConnectionError:
             raise ValueError('Error getting parts data from server.')
 
     @property
@@ -61,6 +61,7 @@ class SparePartsManager(object):
             parts_quantity = values['count'] + values['arrive']
             if values['mustbe'] > parts_quantity:
                 order[part] = {'quantity': values['mustbe'] - parts_quantity}
+
         return order
 
     def _get_alternative_group(self, part_name):
