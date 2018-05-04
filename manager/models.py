@@ -5,7 +5,7 @@ import requests
 
 class SparePart(object):
 
-    def __init__(self, name, count, arrive, mustbe):
+    def __init__(self, name, count=0, arrive=0, mustbe=0):
         self._name = name
         self._count = count
         self._arrive = arrive
@@ -30,6 +30,35 @@ class SparePart(object):
         else:
             return 0
 
+    @property
+    def mustbe(self):
+        return self._mustbe
+
+    @mustbe.setter
+    def mustbe(self, value):
+        if value > self._mustbe:
+            self._mustbe = value
+
+    @property
+    def count(self):
+        return self._count
+
+    @count.setter
+    def count(self, value):
+        self._count = value
+
+    @property
+    def arrive(self):
+        return self._arrive
+
+    @arrive.setter
+    def arrive(self, value):
+        self._arrive = value
+
+    def __repr__(self):
+        return '{} {} {} {}'.format(self._name, self._count,
+                                    self._arrive, self._mustbe)
+
 
 class SparePartsManager(object):
     """ Gets spare parts data and deals with associated logic. """
@@ -39,58 +68,50 @@ class SparePartsManager(object):
 
     def __init__(self):
         try:
-            self._parts = requests.get(self._SPARE_PARTS_URL).json()
+            spare_parts_data = requests.get(self._SPARE_PARTS_URL).json()
+            self._parts = list(self._parse_parts_data(spare_parts_data))
             self._alternatives = requests.get(self._ALTERNATIVES_URL).json()
         except requests.exceptions.ConnectionError:
             raise ValueError('Error getting parts data from server.')
 
     @property
     def parts_grouped(self):
-        """ Returns spare parts` list with grouped by alternatives` list. """
-
         parts_grouped = {}
-        for part, values in self._parts.items():
-            # Does the spare part have an alternatives group?
-            group_name = self._get_alternative_group(part)
-            if group_name is None:
-                parts_grouped[part] = values  # No: keep data unchanged
-            else:
-                if group_name not in parts_grouped:
-                    # Yes: in that case we should make an item for the group,
-                    # if it hasn't already exists,
-                    values_mockup = {'count': 0, 'arrive': 0, 'mustbe': []}
-                    parts_grouped[group_name] = values_mockup
-                #  and sum up values
-                parts_grouped[group_name]['count'] += values['count']
-                parts_grouped[group_name]['arrive'] += values['arrive']
-                # There will be a list for 'mustbe' values, at first
-                parts_grouped[group_name]['mustbe'].append(values['mustbe'])
-
-                # TODO: maybe we would like to save the alternatives for the future, like
-                # parts_grouped[group_name]['alt_list'].append(values)
-
-        for part in parts_grouped:
-            if isinstance(parts_grouped[part]['mustbe'], list):
-                max_value = max(parts_grouped[part]['mustbe'])
-                del parts_grouped[part]['mustbe']
-                # Replace 'mustbe' list with max_value of the list, at second
-                parts_grouped[part]['mustbe'] = max_value
-
+        for part in self._parts_grouped():
+            parts_grouped.update(self._dict_from_part(part))
         return parts_grouped
 
     @property
     def parts_for_order(self):
-        """ Returns list of spare parts that we should order. """
+        parts_for_order = {}
+        for part in self._parts_for_order():
+            parts_for_order.update(self._order_dict_from_part(part))
+        return parts_for_order
 
-        order = {}
-        parts = self.parts_grouped
+    def _parts_grouped(self):
+        """ TODO """
 
-        for part, values in parts.items():
-            parts_quantity = values['count'] + values['arrive']
-            if values['mustbe'] > parts_quantity:
-                order[part] = {'quantity': values['mustbe'] - parts_quantity}
+        grouped = []
 
-        return order
+        for part in self._parts:
+            group_name = self._get_alternative_group(part.name)
+            if group_name is None:
+                grouped.append(part)
+            else:
+                group = self._find_in_parts(group_name, grouped)
+                if not group:
+                    group = SparePart(group_name)
+                    grouped.append(group)
+                group.mustbe = part.mustbe
+                group.count += part.count
+                group.arrive += part.arrive
+
+        return grouped
+
+    def _parts_for_order(self):
+        """ TODO """
+        parts = self._parts_grouped()
+        return [part for part in parts if part.order_quantity != 0]
 
     def _get_alternative_group(self, part_name):
         """Returns alternative name of the spare part. """
@@ -99,3 +120,35 @@ class SparePartsManager(object):
             if part_name in group:
                 return group_name
         return None
+
+    @staticmethod
+    def _find_in_parts(name, parts):
+        for part in parts:
+            if part.name == name:
+                return part
+        return None
+
+    @staticmethod
+    def _dict_from_part(part):
+        d = {}
+        d[part.name] = {}
+        d[part.name]['count'] = part.count
+        d[part.name]['arrive'] = part.arrive
+        d[part.name]['mustbe'] = part.mustbe
+        return d
+
+    @staticmethod
+    def _order_dict_from_part(part):
+        d = {}
+        d[part.name] = {}
+        d[part.name]['quantity'] = part.order_quantity
+        return d
+
+    @staticmethod
+    def _parse_parts_data(data):
+        for name, values in data.items():
+            yield SparePart(name,
+                            values['count'],
+                            values['arrive'],
+                            values['mustbe']
+                            )
