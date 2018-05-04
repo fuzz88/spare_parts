@@ -3,6 +3,34 @@
 import requests
 
 
+class SparePart(object):
+
+    def __init__(self, name, count, arrive, mustbe):
+        self._name = name
+        self._count = count
+        self._arrive = arrive
+        self._mustbe = mustbe
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        if value:
+            self._name = value
+        else:
+            raise ValueError('Spare part`s name is empty.')
+
+    @property
+    def order_quantity(self):
+        quantity = self._count + self._arrive
+        if self._mustbe > quantity:
+            return self._mustbe - quantity
+        else:
+            return 0
+
+
 class SparePartsManager(object):
     """ Gets spare parts data and deals with associated logic. """
 
