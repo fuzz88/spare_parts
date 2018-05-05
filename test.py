@@ -39,10 +39,11 @@ class SparePartsManagerTestCase(unittest.TestCase):
     """ TESTS """
 
     def test_parts_grouped(self):
-        self.assertDictEqual(self.manager.parts_grouped,
-                             {'part1xx': {'count': 3, 'mustbe': 3, 'arrive': 0},
-                              'part200': {'count': 5, 'mustbe': 8, 'arrive': 3},
-                              'part3xx': {'count': 2, 'mustbe': 4, 'arrive': 1}})
+        self.assertDictEqual(
+            self.manager.parts_grouped,
+            {'part1xx': {'count': 3, 'mustbe': 3, 'arrive': 0},
+             'part200': {'count': 5, 'mustbe': 8, 'arrive': 3},
+             'part3xx': {'count': 2, 'mustbe': 4, 'arrive': 1}})
 
     def test_parts_for_order(self):
         self.assertDictEqual(self.manager.parts_for_order,
